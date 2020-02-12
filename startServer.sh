@@ -1,1 +1,1 @@
-(cd public; python3 -m http.server 5001)
+(cd public; python3 -m http.server 8000)

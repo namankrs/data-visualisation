@@ -1,5 +1,5 @@
-const drawBuildings = buildings => {
-  const chartSize = { width: 600, height: 400 };
+const drawCompanies = function(companies) {
+  const chartSize = { width: 800, height: 600 };
   const margin = { left: 100, right: 10, top: 10, bottom: 150 };
 
   const width = chartSize.width - margin.left - margin.right;
@@ -7,14 +7,16 @@ const drawBuildings = buildings => {
 
   const y = d3
     .scaleLinear()
-    .domain([0, _.maxBy(buildings, "height").height])
+    .domain([0, _.maxBy(companies, "CMP").CMP])
     .range([height, 0]);
 
-  x = d3
+  const x = d3
     .scaleBand()
     .range([0, width])
-    .domain(_.map(buildings, "name"))
+    .domain(_.map(companies, "Name"))
     .padding(0.3);
+
+  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
   const container = d3.select("#chart-data");
   const svg = container
@@ -30,27 +32,28 @@ const drawBuildings = buildings => {
     .attr("class", "axis-label")
     .attr("x", width / 2)
     .attr("y", height + 140)
-    .text("Tall Buildings");
+    .text("Companies");
 
   g.append("text")
     .attr("class", "axis-label")
     .attr("transform", "rotate(-90)")
     .attr("x", -height / 2)
     .attr("y", -60)
-    .text("Height (m)");
+    .text("CMP");
 
-  const rectangles = g.selectAll("rect").data(buildings);
+  const rectangles = g.selectAll("rect").data(companies);
   const newRects = rectangles.enter().append("rect");
   newRects
-    .attr("y", b => y(b.height))
-    .attr("x", b => x(b.name))
+    .attr("y", c => y(c.CMP))
+    .attr("x", c => x(c.Name))
     .attr("width", x.bandwidth)
-    .attr("height", b => y(0) - y(b.height));
+    .attr("height", c => y(0) - y(c.CMP))
+    .attr('fill', c => colorScale(c.Name));
 
   const yAxis = d3
     .axisLeft(y)
-    .tickFormat(d => d + "m")
-    .ticks(3);
+    .tickFormat(d => d + " Rs")
+    .ticks(5);
   const xAxis = d3.axisBottom(x);
 
   g.append("g")
@@ -66,13 +69,14 @@ const drawBuildings = buildings => {
     .attr("x", -5)
     .attr("y", 10)
     .attr("transform", "rotate(-40)");
-
-  const toLine = b => `<strong>${b.name}</strong> <i>${b.height}</i>`;
-  document.querySelector("#chart-area").innerHTML = buildings
-    .map(toLine)
-    .join("<hr/>");
 };
+
+const parseCompany = function({Name, ...numrics}) {
+  _.forEach(numrics, (v, k) => numrics[k] = +v);
+  return {Name, ...numrics};
+};
+
 const main = () => {
-  d3.json("data/buildings.json").then(drawBuildings);
+  d3.csv("data/companies.csv", parseCompany).then(drawCompanies);
 };
 window.onload = main;
