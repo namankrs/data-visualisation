@@ -47,10 +47,7 @@ const drawBuildings = buildings => {
     .attr("width", x.bandwidth)
     .attr("height", b => y(0) - y(b.height));
 
-  const yAxis = d3
-    .axisLeft(y)
-    .tickFormat(d => d + "m")
-    .ticks(3);
+  const yAxis = d3.axisLeft(y).tickFormat(d => d + "m").ticks(3);
   const xAxis = d3.axisBottom(x);
 
   g.append("g")
@@ -63,9 +60,9 @@ const drawBuildings = buildings => {
     .attr("transform", `translate(0, ${height})`);
 
   g.selectAll(".x-axis text")
-    .attr("x", -5)
-    .attr("y", 10)
-    .attr("transform", "rotate(-40)");
+  .attr("x", -5)
+  .attr("y", 10)
+  .attr("transform", "rotate(-40)");
 
   const toLine = b => `<strong>${b.name}</strong> <i>${b.height}</i>`;
   document.querySelector("#chart-area").innerHTML = buildings
