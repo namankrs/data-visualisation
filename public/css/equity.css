@@ -1,0 +1,25 @@
+svg {
+  border: 2px solid grey;
+}
+
+.axis-label {
+  font-size: 20px;
+  text-anchor: middle;
+}
+
+.x-axis text {
+  text-anchor: end;
+  transform: rotate(-40deg);
+}
+
+.close {
+  fill: none;
+  stroke: black;
+  stroke-width: 2px;
+}
+
+.sma {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
