@@ -15,7 +15,18 @@
   <script src="js/d3.v5.min.js"></script>
   <script src="js/equity.js"></script>
 
+  <!-- Range slider code -->
+  <script src="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.js"></script>
+  <!-- Range slider style -->
+  <link href="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.css" rel="stylesheet">
+
   <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <div id="slider-container"></div>
+        <div id="range-label"></div>
+      </div>
+    </div>
     <div class="row">
       <div id="chart-area" class="col-sm">
         <svg></svg>
@@ -23,4 +34,5 @@
     </div>
   </div>
 </body>
+
 </html>

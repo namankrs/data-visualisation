@@ -4,6 +4,8 @@ const margin = { left: 100, right: 10, top: 20, bottom: 150 };
 const width = chartSize.width - margin.left - margin.right;
 const height = chartSize.height - margin.top - margin.bottom;
 
+const removePaths = () => d3.selectAll("path").remove();
+
 const initChart = () => {
   const container = d3.select("#chart-area svg");
   const svg = container
@@ -44,13 +46,21 @@ const updateQuotes = function(quotes) {
   const fq = _.first(quotes);
   const lq = _.last(quotes);
   const minClose = _.get(_.minBy(quotes, "Close"), "Close", 0);
+  const minSMA = _.get(
+    _.minBy(
+      quotes.filter(q => q.SMA),
+      "SMA"
+    ),
+    "SMA",
+    0
+  );
   const maxClose = _.get(_.maxBy(quotes, "Close"), "Close", 0);
 
   const quotesG = d3.select("#chart-area svg .prices");
 
   const y = d3
     .scaleLinear()
-    .domain([minClose, maxClose])
+    .domain([Math.min(minSMA, minClose), maxClose])
     .range([height, 0]);
 
   const yAxis = d3.axisLeft(y).ticks(10);
@@ -83,18 +93,13 @@ const updateQuotes = function(quotes) {
   quotesG
     .append("path")
     .attr("class", "sma")
-    .attr("d", averageLine(quotes.slice(99)));
+    .attr("d", averageLine(_.filter(quotes, "SMA")));
 };
 
 const parseNSEI = function({ Date, Volume, AdjClose, ...numeric }) {
   _.forEach(numeric, (v, k) => (numeric[k] = +v));
   const Time = new globalThis.Date(Date);
   return { Date, Time, ...numeric };
-};
-
-const recordTransactions = quotes => {
-  const buyTransactions = quotes.filter(q => q.SMA < q.Close);
-  const sellTransactions = quotes.filter(q => q.Close < q.SMA);
 };
 
 const analyseData = quotes => {
@@ -106,9 +111,48 @@ const analyseData = quotes => {
   }
 };
 
+const stringifyTimestamp = timestamp => {
+  return new Date(timestamp)
+    .toJSON()
+    .split("T")[0]
+    .replace(/-/g, "/");
+};
+
+const getQoutesBetween = (qoutes, firstDate, lastDate) =>
+  qoutes.filter(qoute => qoute.Date > firstDate && qoute.Date < lastDate);
+
+const insertSlider = quotes => {
+  const firstQouteDate = _.first(quotes).Time.getTime();
+  const lastQouteDate = _.last(quotes).Time.getTime();
+  var slider = createD3RangeSlider(
+    firstQouteDate,
+    lastQouteDate,
+    "#slider-container"
+  );
+
+  slider.onChange(newRange => {
+    d3.select("#range-label").text(
+      stringifyTimestamp(newRange.begin) +
+        " - " +
+        stringifyTimestamp(newRange.end)
+    );
+
+    const newQoutes = getQoutesBetween(
+      quotes,
+      new Date(newRange.begin).toJSON(),
+      new Date(newRange.end).toJSON()
+    );
+    removePaths();
+    updateQuotes(newQoutes);
+  });
+
+  slider.range(firstQouteDate, lastQouteDate);
+};
+
 const visualizeQuotes = quotes => {
   analyseData(quotes);
-  recordTransactions(quotes);
+  insertSlider(quotes);
+
   initChart(quotes);
   updateQuotes(quotes);
 };
