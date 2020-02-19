@@ -83,7 +83,7 @@ const updateQuotes = function(quotes) {
   quotesG
     .append("path")
     .attr("class", "sma")
-    .attr("d", averageLine(quotes));
+    .attr("d", averageLine(quotes.slice(99)));
 };
 
 const parseNSEI = function({ Date, Volume, AdjClose, ...numeric }) {
@@ -92,19 +92,23 @@ const parseNSEI = function({ Date, Volume, AdjClose, ...numeric }) {
   return { Date, Time, ...numeric };
 };
 
-const analyseData = quotes => {
-  const restQuotes = quotes.slice(99);
+const recordTransactions = quotes => {
+  const buyTransactions = quotes.filter(q => q.SMA < q.Close);
+  const sellTransactions = quotes.filter(q => q.Close < q.SMA);
+};
 
-  restQuotes.forEach((q, i) => {
-    const firstIndex = i;
-    const lastHundredQuotes = quotes.slice(firstIndex, i + 100);
+const analyseData = quotes => {
+  for (let i = 99; i < quotes.length; i++) {
+    const firstIndex = i - 99;
+    const lastHundredQuotes = quotes.slice(firstIndex, i + 1);
     const sum = lastHundredQuotes.reduce((s, quote) => s + quote.Close, 0);
-    q["SMA"] = Math.round(sum / 100);
-  });
+    quotes[i]["SMA"] = Math.round(sum / 100);
+  }
 };
 
 const visualizeQuotes = quotes => {
   analyseData(quotes);
+  recordTransactions(quotes);
   initChart(quotes);
   updateQuotes(quotes);
 };
