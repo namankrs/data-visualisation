@@ -149,6 +149,10 @@ const insertSlider = quotes => {
   slider.range(firstQouteDate, lastQouteDate);
 };
 
+changeSMAPeriod = event => {
+  console.log(event);
+};
+
 const visualizeQuotes = quotes => {
   analyseData(quotes);
   insertSlider(quotes);

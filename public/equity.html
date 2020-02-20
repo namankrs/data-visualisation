@@ -1,38 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Buildings</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/equity.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Buildings</title>
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/equity.css">
-</head>
+  <body>
+    <script src="js/lodash.min.js"></script>
+    <script src="js/d3.v5.min.js"></script>
+    <script src="js/equity.js"></script>
 
-<body>
-  <script src="js/lodash.min.js"></script>
-  <script src="js/d3.v5.min.js"></script>
-  <script src="js/equity.js"></script>
+    <!-- Range slider code -->
+    <script src="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.js"></script>
+    <!-- Range slider style -->
+    <link
+      href="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.css"
+      rel="stylesheet"
+    />
 
-  <!-- Range slider code -->
-  <script src="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.js"></script>
-  <!-- Range slider style -->
-  <link href="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.css" rel="stylesheet">
-
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-6">
-        <div id="slider-container"></div>
-        <div id="range-label"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div id="slider-container"></div>
+          <div id="range-label"></div>
+        </div>
+        <div>
+          <span>SMA period:</span>
+          <input
+            id="SMA-period"
+            type="number"
+            placeholder="SMA period"
+            value="100"
+            min="0"
+            onchange="changeSMAPeriod(event)"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div id="chart-area" class="col-sm">
+          <svg></svg>
+        </div>
       </div>
     </div>
-    <div class="row">
-      <div id="chart-area" class="col-sm">
-        <svg></svg>
-      </div>
-    </div>
-  </div>
-</body>
-
+  </body>
 </html>
